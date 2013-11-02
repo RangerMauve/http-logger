@@ -1,0 +1,15 @@
+{
+  "name": "http-logger",
+  "version": "0.0.0",
+  "description": "Log http requests and view them with a pretty browser-based UI.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RangerMauve/http-logger.git"
+  },
+  "author": "RangerMauve",
+  "license": "MIT"
+}
