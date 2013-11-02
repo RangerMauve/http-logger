@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>HTTP-Logs</title>
+	<style type="text/css">
+		html, body {margin:0; padding:0;}
+		#logs {margin:20px;}
+		.hidden {display:none;}
+	</style>
+</head>
+
+<body>
+	<table id="logs"></table>
+	<script>
+		function getData(callback) {
+			var req = new XMLHttpRequest();
+			req.open("GET", "/logdata.json");
+			req.onload = function() {
+				callback(JSON.parse(req.responseText));
+			}
+			req.send(null);
+		}
+
+		function makeHeaders(data) {
+			return Object.keys(data[0])
+				.reduce(function(p, e) {
+					return p + "\t<th>" + e + "</th>\n";
+				}, "<thead><tr>\n") + "</tr></thead>";
+		}
+
+		function makeRow(data) {
+			var res = "",
+				k, v, k2, v2;
+			for (k in data) {
+				v = data[k];
+				if (v) {
+					res += '\t<td class="'+k+'">';
+					if ('object' == typeof v){
+						res += '\t[Object]\n\t<div class="hidden">\n'
+						for (k2 in v) {
+							v2 = v[k2];
+							if (v2) res += "\t\t<div>" + k2 + ":" + v2 + "</div>\n"
+						}
+						res += "\t</div>"
+					} else {
+						if(k.toLowerCase().indexOf('timestamp')>=0){
+							data[k]=new Date(data[k]);
+						}
+						res += data[k];
+					}
+					res += "</td>\t";
+				}
+			}
+			return res;
+		}
+
+		function makeRows(data) {
+			return data.reduce(function(p, e) {
+				return p + "<tr>" + makeRow(e) + "</tr>\n";
+			}, "<tbody>\n\n") + "\n</tbody>";
+		}
+
+		function makeTable() {
+			getData(function(data) {
+				if (!data.length) return;
+				var tablehtml = "";
+				tablehtml += makeHeaders(data);
+				tablehtml += makeRows(data);
+				document.getElementById("logs").innerHTML = tablehtml;
+			});
+		}
+		
+		makeTable();
+	</script>
+</body>
+
+</html>
+<!--
+
+Nyan~
+	\    /\
+	 )  ( ')
+	(  /  )
+	 \(__)|
+
+-->

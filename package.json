@@ -11,5 +11,8 @@
     "url": "https://github.com/RangerMauve/http-logger.git"
   },
   "author": "RangerMauve",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "connect": "~2.11.0"
+  }
 }
