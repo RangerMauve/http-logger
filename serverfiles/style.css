@@ -1,0 +1,42 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+#logs {
+	margin: 10px auto;
+}
+.hidden {
+	display: none;
+}
+th {
+	text-transform: capitalize;
+}
+td.short {
+	width: 10px;
+}
+td.short > * {
+	display: none;
+}
+td {
+	word-wrap: break-word;
+	max-width: 300px;
+}
+tbody tr:nth-child(even) {
+	background: rgba(0, 235, 255, 0.74)
+}
+tbody tr:nth-child(odd) {
+	background: rgba(0, 147, 255, 0.74)
+}
+tbody tr:hover {
+	background: rgba(255, 255, 0, 0.59);
+}
+tbody td:hover {
+	background: rgba(0, 255, 20, 0.32);
+}
+table,
+th,
+td {
+	border: 1px solid black;
+}
