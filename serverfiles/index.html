@@ -5,13 +5,23 @@
 	<title>HTTP-Logs</title>
 	<style type="text/css">
 		html, body {margin:0; padding:0;}
-		#logs {margin:20px;}
+		#logs {margin:10px auto;}
 		.hidden {display:none;}
+		th {text-transform: capitalize;}
+		td.short{width:10px;}
+		td.short > * {display:none;}
+		td {word-wrap:break-word;max-width:300px;}
+		tbody tr:nth-child(even) {background: rgba(0, 235, 255, 0.74)}
+		tbody tr:nth-child(odd) {background: rgba(0, 147, 255, 0.74)}
+		tbody tr:hover {background:rgba(255, 255, 0, 0.59);}
+		tbody td:hover {background:rgba(0, 255, 20, 0.32);}
+		table,th,td {border: 1px solid black;}
 	</style>
 </head>
 
 <body>
 	<table id="logs"></table>
+	<center><button onclick="makeTable()">Refresh</button>Auto Refresh:<input type="checkbox" onchange="toggleAutoRefresh(this)"></center>
 	<script>
 		function getData(callback) {
 			var req = new XMLHttpRequest();
@@ -25,7 +35,12 @@
 		function makeHeaders(data) {
 			return Object.keys(data[0])
 				.reduce(function(p, e) {
-					return p + "\t<th>" + e + "</th>\n";
+					return p + 
+						'\t<th class="' + 
+						e + '">' + e + 
+						'<span onclick="toggleHiddenColumns(this.parentElement)">&#x2717;</span>'+
+						'<span>&#x25BE</span>'+
+						'</th>\n';
 				}, "<thead><tr>\n") + "</tr></thead>";
 		}
 
@@ -35,21 +50,33 @@
 			for (k in data) {
 				v = data[k];
 				if (v) {
-					res += '\t<td class="'+k+'">';
-					if ('object' == typeof v){
-						res += '\t[Object]\n\t<div class="hidden">\n'
-						for (k2 in v) {
-							v2 = v[k2];
-							if (v2) res += "\t\t<div>" + k2 + ":" + v2 + "</div>\n"
+					if ('object' == typeof v) {
+						if (Object.keys(v).length) {
+							res += '\t<td class="' + k + '"><span onclick="toggleHidden(this.children)">';
+							res += '\t<div>[Object]</div>\n\t<div class="hidden">\n'
+							for (k2 in v) {
+								v2 = JSON.stringify(v[k2]);
+								if (v2) res += "\t\t<div>" + k2 + ":" + v2 + "</div>\n"
+							}
+							res += "\t</div>"
+						} else {
+							res += '\t<td class="' + k + '"><span>[Empty]';
 						}
-						res += "\t</div>"
 					} else {
-						if(k.toLowerCase().indexOf('timestamp')>=0){
-							data[k]=new Date(data[k]);
+						res += '\t<td class="' + k + '"><span>';
+						if (k.toLowerCase().indexOf('timestamp') >= 0) {
+							var date = new Date(data[k]);
+							data[k] =
+								date.getFullYear()+
+								"/"+date.getMonth()+
+								"/"+date.getDate()+
+								" "+date.getHours()+(date.getHours() < 10 ? "0" :"")+
+								":"+date.getMinutes()+(date.getMinutes() < 10 ? "0" :"")+
+								":"+date.getSeconds()+(date.getSeconds() < 10 ? "0" :"");
 						}
 						res += data[k];
 					}
-					res += "</td>\t";
+					res += "</span></td>\n";
 				}
 			}
 			return res;
@@ -62,13 +89,45 @@
 		}
 
 		function makeTable() {
+			var toHide = document.querySelectorAll("th.short");
+			console.log("Re-creating the table");
 			getData(function(data) {
 				if (!data.length) return;
 				var tablehtml = "";
 				tablehtml += makeHeaders(data);
 				tablehtml += makeRows(data);
 				document.getElementById("logs").innerHTML = tablehtml;
+				for(var i=0; i < toHide.length; ++i)
+					toggleHiddenColumns(toHide[i]);
+				if(!toHide.length)
+					toggleHiddenColumns(document.querySelector(".agent"));
 			});
+		}
+
+		function toggleHidden(elms) {
+			if (!elms) return;
+			if (elms.length)
+				for (var i = 0; i < elms.length; ++i)
+					toggleHidden(elms[i]);
+			else elms.classList.toggle("hidden");
+		}
+		
+		function toggleHiddenColumns(elm){
+			var elms = document.querySelectorAll("."+elm.classList[0]);
+			for(var i = 0; i < elms.length; ++i)elms[i].classList.toggle("short");
+		}
+		
+		
+		function autoRefresh(){
+			makeTable();
+			if(autoRefresh.shouldRefresh)
+				setTimeout(autoRefresh,autoRefresh.time || 5000);
+		}
+		function toggleAutoRefresh(elm){
+			autoRefresh.shouldRefresh = !!elm.checked;
+			if(elm.checked){
+				autoRefresh();
+			}
 		}
 		
 		makeTable();

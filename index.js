@@ -15,11 +15,13 @@ module.exports = {
 						timeStamp: Date.now(),
 						agent: req.headers["user-agent"],
 						hostname: req.headers["host"],
-						body: req.body||{},
-						session: req.session||{},
-						params: req.params||{},
-						cookies: req.cookies||{}
+						body: req.body || {},
+						cookies: req.cookies || {}
 					};
+					logmsg.session = {};
+					for (var key in req.session)
+						if (key !== cookie)
+							logmsg.session[key] = req.session[key];
 					if (logname) {
 						fs.appendFile(
 							logname,
@@ -46,7 +48,7 @@ module.exports = {
 		}
 
 		// Set up file watcher to parse the log file
-		function updateFileData(){
+		function updateFileData() {
 			fs.readFile(logname, function (err, data) {
 				if (data) {
 					a = data.toString().split("\n");
