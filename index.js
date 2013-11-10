@@ -20,7 +20,7 @@ module.exports = {
 					};
 					logmsg.session = {};
 					for (var key in req.session)
-						if (key !== cookie)
+						if (key !== "cookie")
 							logmsg.session[key] = req.session[key];
 					if (logname) {
 						fs.appendFile(
@@ -62,7 +62,7 @@ module.exports = {
 
 		// Set up server
 		app = connect();
-		app.use(connect.static("./serverfiles"));
+		app.use(connect.static(path.join(__dirname,"/serverfiles")));
 		app.use(function (req, res, next) {
 			res.setHeader("Content-Type", "application/json");
 			res.end(filedata);
