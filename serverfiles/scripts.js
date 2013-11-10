@@ -8,15 +8,14 @@ function getData(callback) {
 }
 
 function makeHeaders(data) {
-	return Object.keys(data[0])
-		.reduce(function (p, e) {
-			return p +
-				'\t<th class="' +
-				e + '">' + e +
-				'<span onclick="toggleHiddenColumns(this.parentElement)">&#x2717;</span>' +
-				'<span>&#x25BE</span>' +
-				'</th>\n';
-		}, "<thead><tr>\n") + "</tr></thead>";
+	return Object.keys(data[0]).reduce(function (p, e) {
+		return p +
+			'\t<th class="' +
+			e + '">' + e +
+			'<span onclick="toggleHiddenColumns(this.parentElement)">&#x25c9;</span>' +
+			'<span>&#x25BE</span>' +
+			'</th>\n';
+	}, "<thead><tr>\n") + "</tr></thead>";
 }
 
 function makeRow(data) {
@@ -35,7 +34,7 @@ function makeRow(data) {
 					}
 					res += "\t</div>"
 				} else {
-					res += '\t<td class="' + k + '"><span>[Empty]';
+					res += '\t<td class="' + k + '"><span>';
 				}
 			} else {
 				res += '\t<td class="' + k + '"><span>';
