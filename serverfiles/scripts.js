@@ -18,10 +18,10 @@ function makeHeaders(data) {
 	}, "<thead><tr>\n") + "</tr></thead>";
 }
 
-function makeRow(data) {
+function makeRow(data, order) {
 	var res = "",
 		k, v, k2, v2;
-	for (k in data) {
+	order.forEach(function (k) {
 		v = data[k];
 		if (v) {
 			if ('object' == typeof v) {
@@ -52,13 +52,13 @@ function makeRow(data) {
 			}
 			res += "</span></td>\n";
 		}
-	}
+	});
 	return res;
 }
 
 function makeRows(data) {
-	return data.reduce(function (p, e) {
-		return p + "<tr>" + makeRow(e) + "</tr>\n";
+	return data.reduce(function (p, e, "") {
+		return p + "<tr>" + makeRow(e, Object.keys(data[0])) + "</tr>\n";
 	}, "<tbody>\n\n") + "\n</tbody>";
 }
 
@@ -90,7 +90,6 @@ function toggleHiddenColumns(elm) {
 	var elms = document.querySelectorAll("." + elm.classList[0]);
 	for (var i = 0; i < elms.length; ++i) elms[i].classList.toggle("short");
 }
-
 
 function autoRefresh() {
 	makeTable();
