@@ -16,13 +16,13 @@ module.exports = {
 					connect.urlencoded()(req, res, function () {
 						var logmsg = {
 							method: req.method || "",
+							status: res.statusCode||"",
 							ip: req.connection.remoteAddress,
 							url: req.url,
 							timeStamp: Date.now(),
 							agent: req.headers["user-agent"] || "",
 							hostname: req.headers["host"] || "",
 							body: req.body || {},
-							cookies: req.cookies || {}
 						};
 						if (logname) {
 							fs.appendFile(
