@@ -6,30 +6,36 @@ var path = require("path")
 module.exports = {
 	logger: function (logname) {
 		return function (req, res, next) {
-			connect.json()(req, res, function () {
-				connect.urlencoded()(req, res, function () {
-					var logmsg = {
-						method: req.method || "",
-						ip: req.connection.remoteAddress,
-						url: req.url,
-						timeStamp: Date.now(),
-						agent: req.headers["user-agent"]||"",
-						hostname: req.headers["host"]||"",
-						body: req.body || {},
-						cookies: req.cookies || {}
-					};
-					if (logname) {
-						fs.appendFile(
-							logname,
-							JSON.stringify(logmsg) + "\n",
-							function () {}
-						);
-					} else {
-						console.log(logmsg);
-					}
-					next();
+			res.on("finish",dolog);
+			res.on("close",dolog);
+			next();
+			function dolog() {
+				res.removeListener("finish",dolog);
+				res.removeListener("close",dolog);
+				connect.json()(req, res, function () {
+					connect.urlencoded()(req, res, function () {
+						var logmsg = {
+							method: req.method || "",
+							ip: req.connection.remoteAddress,
+							url: req.url,
+							timeStamp: Date.now(),
+							agent: req.headers["user-agent"] || "",
+							hostname: req.headers["host"] || "",
+							body: req.body || {},
+							cookies: req.cookies || {}
+						};
+						if (logname) {
+							fs.appendFile(
+								logname,
+								JSON.stringify(logmsg) + "\n",
+								function () {}
+							);
+						} else {
+							console.log(logmsg);
+						}
+					});
 				});
-			});
+			}
 		}
 	},
 	server: function (options) {
@@ -58,7 +64,7 @@ module.exports = {
 
 		// Set up server
 		app = connect();
-		app.use(connect.static(path.join(__dirname,"/serverfiles")));
+		app.use(connect.static(path.join(__dirname, "/serverfiles")));
 		app.use(function (req, res, next) {
 			res.setHeader("Content-Type", "application/json");
 			res.end(filedata);
