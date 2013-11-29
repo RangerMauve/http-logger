@@ -1,6 +1,6 @@
 {
   "name": "http-logger",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Log http requests and view them with a pretty browser-based UI.",
   "main": "index.js",
   "scripts": {
