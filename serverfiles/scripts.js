@@ -57,7 +57,7 @@ function makeRow(data, order) {
 }
 
 function makeRows(data) {
-	return data.reduce(function (p, e, "") {
+	return data.reduce(function (p, e) {
 		return p + "<tr>" + makeRow(e, Object.keys(data[0])) + "</tr>\n";
 	}, "<tbody>\n\n") + "\n</tbody>";
 }
