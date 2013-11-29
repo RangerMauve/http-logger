@@ -13,15 +13,11 @@ module.exports = {
 						ip: req.connection.remoteAddress,
 						url: req.url,
 						timeStamp: Date.now(),
-						agent: req.headers["user-agent"],
-						hostname: req.headers["host"],
+						agent: req.headers["user-agent"]||"",
+						hostname: req.headers["host"]||"",
 						body: req.body || {},
 						cookies: req.cookies || {}
 					};
-					logmsg.session = {};
-					for (var key in req.session)
-						if (key !== "cookie")
-							logmsg.session[key] = req.session[key];
 					if (logname) {
 						fs.appendFile(
 							logname,
